@@ -4,6 +4,18 @@ package user;
 
 option go_package = "github.com/MirzaDgtu/cleangogrpc/api/v1/user;user";
 
+
+service UserService {
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+    rpc GetUser(GetUserRequest) returns (GetUserResponse);
+    rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+    rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+    rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+    rpc ChangeUserStatus(ChangeUserStatusRequest) returns (ChangeUserStatusResponse);
+    rpc ChangeUserPassword(ChangeUserPasswordRequest) returns (ChangeUserPasswordResponse);
+}
+
+
 message User {
     string id = 1;
     string name = 2;

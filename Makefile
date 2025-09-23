@@ -1,22 +1,17 @@
-# Makefile
-PROTO_DIR        := api/v1/user
-PROTO_FILE       := $(PROTO_DIR)/user.proto
-OUT_DIR          := gen/go
-PROTOC           := protoc
-GO_PLUGIN        := --go_out=$(OUT_DIR)
-GO_GRPC_PLUGIN   := --go-grpc_out=$(OUT_DIR)
+# Makefile для Borland Make 5.2
+PROTO_DIR = api/v1/user
+PROTO_FILE = $(PROTO_DIR)/user.proto
+OUT_DIR = gen/go
 
-.PHONY: proto
-proto: $(OUT_DIR) ## Генерирует Go-код из .proto
-	$(PROTOC) -I . $(GO_PLUGIN) $(GO_GRPC_PLUGIN) $(PROTO_FILE)
+.proto:
+    if not exist "$(OUT_DIR)" mkdir "$(OUT_DIR)"
+    protoc -I . --go_out=$(OUT_DIR) --go_opt=paths=source_relative --go-grpc_out=$(OUT_DIR) --go-grpc_opt=paths=source_relative $(PROTO_FILE)
 
-$(OUT_DIR):
-	mkdir -p $@
+.clean:
+    if exist "gen" rmdir /s /q "gen"
 
-.PHONY: clean
-clean: ## Удаляет сгенерированные файлы
-	rm -rf generated/
-
-.PHONY: help
-help: ## Показать доступные цели
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
+.help:
+    @echo Доступные цели:
+    @echo   proto  - Генерирует Go-код из .proto
+    @echo   clean  - Удаляет сгенерированные файлы
+    @echo   help   - Показать этот экран
