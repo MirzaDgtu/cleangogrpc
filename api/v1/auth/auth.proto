@@ -1,0 +1,162 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "github.com/MirzaDgtu/cleangogrpc/api/v1/auth;auth";
+
+import "google/protobuf/timestamp.proto";
+import "api/v1/user/user.proto";
+
+// ============================================================================
+// Auth Service Messages
+// ============================================================================
+
+// Register message
+message RegisterRequest {
+    string name = 1;
+    string email = 2;
+    string password = 3;
+    string phone = 4;
+}
+
+message RegisterResponse {
+    user.User user = 1;
+    string access_token = 3;
+    string refresh_token = 4;
+    google.protobuf.Timestamp expires_at = 5;
+}
+
+// Login message
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+    string ip_address = 3;
+}
+
+message LoginResponse {
+    user.User user = 1;
+    string access_token = 3;
+    string refresh_token = 4;
+    string session_id = 5;
+    google.protobuf.Timestamp expires_at = 6;
+}
+
+// Validate Token messages
+message ValidateTokenRequest {
+  string token = 1;
+}
+
+message ValidateTokenResponse {
+    bool valid = 1;
+    google.protobuf.Timestamp expires_at = 4;
+}
+
+// Refresh Token messages
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+
+message RefreshTokenResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  google.protobuf.Timestamp expires_at = 3;
+}
+
+// Logout messages
+message LogoutRequest {
+  string session_id = 1;
+  string access_token = 2;
+}
+
+message LogoutResponse {
+  string message = 1;
+}
+
+// Change Password messages
+message ChangeUserPasswordRequest {
+  string user_id = 1;
+  string current_password = 2;
+  string new_password = 3;
+}
+
+message ChangeUserPasswordResponse {
+  string message = 1;
+}
+
+// Reset Password messages
+message ResetPasswordRequest {
+  string email = 1;
+}
+
+message ResetPasswordResponse {
+  string reset_token = 1;
+}
+
+// Confirm reset password
+message ConfirmResetPasswordRequest {
+  string reset_token = 1;
+  string new_password = 2;
+}
+
+message ConfirmResetPasswordResponse {
+  string message = 1;
+}
+
+// Response status codes
+enum ResponseStatus {
+  RESPONSE_STATUS_UNSPECIFIED = 0;
+  RESPONSE_STATUS_SUCCESS = 1;
+  RESPONSE_STATUS_ERROR = 2;
+  RESPONSE_STATUS_UNAUTHORIZED = 3;
+  RESPONSE_STATUS_FORBIDDEN = 4;
+  RESPONSE_STATUS_NOT_FOUND = 5;
+  RESPONSE_STATUS_VALIDATION_ERROR = 6;
+  RESPONSE_STATUS_INTERNAL_ERROR = 7;
+}
+
+// Health check
+message HealthCheckRequest {
+  string service = 1;
+}
+
+message HealthCheckResponse {
+  ResponseStatus status = 1;
+  string service = 2;
+  string version = 3;
+  google.protobuf.Timestamp timestamp = 4;
+  map<string, string> details = 5;
+}
+
+// ============================================================================
+// Auth Service
+// ============================================================================
+
+
+service AuthService {
+    // Register a new user
+    rpc Register(RegisterRequest) returns (RegisterResponse);
+
+    // Login user
+    rpc Login(LoginRequest) returns (LoginResponse);
+
+    // Logout user
+    rpc Logout(LogoutRequest) returns (LogoutResponse);
+
+    // Validate access token
+    rpc ValidateToken(ValidateTokenRequest) returns(ValidateTokenResponse);
+
+    // Refresh access token
+    rpc RefreshToken(RefreshTokenRequest) returns(RefreshTokenResponse);
+
+    // Reset user password 
+    rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);
+
+    // Confirm reset password 
+    rpc ConfirmResetPassword(ConfirmResetPasswordRequest) returns(ConfirmResetPasswordResponse);
+
+    // Change user password
+    rpc ChangeUserPassword(ChangeUserPasswordRequest) returns(ChangeUserPasswordResponse);
+
+    rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
+
+}
