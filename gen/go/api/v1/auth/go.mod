@@ -1,4 +1,4 @@
-module github.com/MirzaDgtu/cleangogrpc/api/v1/auth
+module github.com/MirzaDgtu/cleangogrpc/gen/go/api/v1/auth
 
 go 1.23.1
 
